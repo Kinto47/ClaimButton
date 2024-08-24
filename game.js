@@ -15,6 +15,8 @@ function startGame() {
     score = 0;
     updateScore();
     startButton.style.display = 'none';
+    player.style.bottom = '0px';  // reset player position
+    player.style.left = '50px';
     document.addEventListener('keydown', jump);
     gameLoop();
 }
@@ -34,17 +36,29 @@ function gameLoop() {
 function jump(e) {
     if (e.keyCode === 32 && !isJumping) { // Spacebar key
         isJumping = true;
-        let jumpCount = 0;
+        let jumpHeight = 0;
         const jumpInterval = setInterval(() => {
-            if (jumpCount > 20) {
+            if (jumpHeight > 100) {  // max jump height
                 clearInterval(jumpInterval);
-                isJumping = false;
+                fall();
             } else {
                 player.style.bottom = `${parseInt(player.style.bottom) + 5}px`;
-                jumpCount++;
+                jumpHeight += 5;
             }
         }, 20);
     }
+}
+
+function fall() {
+    const fallInterval = setInterval(() => {
+        if (parseInt(player.style.bottom) <= 0) {
+            clearInterval(fallInterval);
+            player.style.bottom = '0px';
+            isJumping = false;
+        } else {
+            player.style.bottom = `${parseInt(player.style.bottom) - 5}px`;
+        }
+    }, 20);
 }
 
 function detectCollision(a, b) {
