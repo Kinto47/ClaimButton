@@ -1,57 +1,41 @@
 body {
     font-family: Arial, sans-serif;
-    text-align: center;
-    background-color: #87CEEB;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
     margin: 0;
-    padding: 0;
-    overflow: hidden;
+    background-color: #f4f4f4;
 }
 
-#gameContainer {
-    position: relative;
-    width: 800px;
-    height: 400px;
-    margin: 20px auto;
-    background-color: #5c94fc;
-    overflow: hidden;
-    border: 2px solid #000;
+.container {
+    text-align: center;
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-#player {
-    position: absolute;
-    width: 50px;
-    height: 50px;
-    background-color: red;
-    bottom: 0;
-    left: 50px;
-}
-
-#platform {
-    position: absolute;
-    width: 200px;
-    height: 20px;
-    background-color: green;
-    bottom: 100px;
-    left: 300px;
-}
-
-#coin {
-    position: absolute;
-    width: 30px;
-    height: 30px;
-    background-color: yellow;
-    border-radius: 50%;
-    bottom: 130px;
-    left: 320px;
-}
-
-#score, #toshi {
-    font-size: 24px;
-    margin: 10px;
-}
-
-#startButton {
-    padding: 10px 20px;
-    font-size: 18px;
+button {
+    padding: 15px 30px;
+    font-size: 16px;
     cursor: pointer;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+button:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+}
+
+#timer {
+    font-size: 24px;
+    margin-top: 20px;
+}
+
+.hidden {
+    display: none;
 }
