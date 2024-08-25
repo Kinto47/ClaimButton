@@ -1,92 +1,47 @@
-let score = 0;
-let totalToshi = 0;
-let isJumping = false;
-let isGameRunning = false;
+const farmingButton = document.getElementById('farmingButton');
+const timerElement = document.getElementById('timer');
+const rewardElement = document.getElementById('reward');
+const claimButton = document.getElementById('claimButton');
 
-const player = document.getElementById('player');
-const platform = document.getElementById('platform');
-const coin = document.getElementById('coin');
-const scoreDisplay = document.getElementById('score');
-const toshiDisplay = document.getElementById('toshi');
-const startButton = document.getElementById('startButton');
+let farmingStartTime = null;
+const FARMING_DURATION = 8 * 60 * 60 * 1000; // 8 ore in millisecondi
 
-function startGame() {
-    isGameRunning = true;
-    score = 0;
-    updateScore();
-    startButton.style.display = 'none';
-    player.style.bottom = '0px';  // reset player position
-    player.style.left = '50px';
-    document.addEventListener('keydown', jump);
-    gameLoop();
+farmingButton.addEventListener('click', startFarming);
+claimButton.addEventListener('click', claimReward);
+
+function startFarming() {
+    farmingStartTime = Date.now();
+    farmingButton.disabled = true;
+    farmingButton.textContent = 'FARMING IN PROGRESS...';
+    timerElement.classList.remove('hidden');
+    updateTimer();
 }
 
-function gameLoop() {
-    if (!isGameRunning) return;
+function updateTimer() {
+    const now = Date.now();
+    const elapsedTime = now - farmingStartTime;
+    const remainingTime = FARMING_DURATION - elapsedTime;
 
-    if (detectCollision(player, coin)) {
-        score += 10;
-        updateScore();
-        resetCoin();
-    }
+    if (remainingTime <= 0) {
+        showClaimButton();
+    } else {
+        const hours = Math.floor((remainingTime / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((remainingTime / (1000 * 60)) % 60);
+        const seconds = Math.floor((remainingTime / 1000) % 60);
 
-    requestAnimationFrame(gameLoop);
-}
-
-function jump(e) {
-    if (e.keyCode === 32 && !isJumping) { // Spacebar key
-        isJumping = true;
-        let jumpHeight = 0;
-        const jumpInterval = setInterval(() => {
-            if (jumpHeight > 100) {  // max jump height
-                clearInterval(jumpInterval);
-                fall();
-            } else {
-                player.style.bottom = `${parseInt(player.style.bottom) + 5}px`;
-                jumpHeight += 5;
-            }
-        }, 20);
+        timerElement.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        setTimeout(updateTimer, 1000);
     }
 }
 
-function fall() {
-    const fallInterval = setInterval(() => {
-        if (parseInt(player.style.bottom) <= 0) {
-            clearInterval(fallInterval);
-            player.style.bottom = '0px';
-            isJumping = false;
-        } else {
-            player.style.bottom = `${parseInt(player.style.bottom) - 5}px`;
-        }
-    }, 20);
+function showClaimButton() {
+    timerElement.classList.add('hidden');
+    rewardElement.classList.remove('hidden');
+    farmingButton.textContent = 'START FARMING';
+    farmingButton.disabled = false;
 }
 
-function detectCollision(a, b) {
-    const aRect = a.getBoundingClientRect();
-    const bRect = b.getBoundingClientRect();
-    return !(
-        aRect.bottom < bRect.top ||
-        aRect.top > bRect.bottom ||
-        aRect.right < bRect.left ||
-        aRect.left > bRect.right
-    );
+function claimReward() {
+    alert('Hai riscosso 50 TOSHI!');
+    rewardElement.classList.add('hidden');
 }
-
-function resetCoin() {
-    coin.style.left = `${Math.random() * 750}px`;
-    coin.style.bottom = `${Math.random() * 200 + 100}px`;
-}
-
-function updateScore() {
-    scoreDisplay.textContent = `Score: ${score}`;
-    totalToshi += Math.floor(score / 10); // Conversione 1 punto = 1 TOSHI
-    toshiDisplay.textContent = `TOSHI: ${totalToshi}`;
-}
-
-function endGame() {
-    isGameRunning = false;
-    document.removeEventListener('keydown', jump);
-    startButton.style.display = 'block';
-}
-
-startButton.addEventListener('click', startGame);
